@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Landing Page</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('istockphoto-1829241109-1024x1024 (1).jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    #main-content {
+      padding: 20px;
+      text-align: center;
+      color: white;
+      background: rgba(0, 0, 0, 0.5);
+      margin: 50px;
+      border-radius: 10px;
+    }
+
+    #chat-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      animation: bounce 2s infinite;
+    }
+
+    #close-chat-btn{
+      color: whitesmoke;
+      background: none;
+      width: 20px;
+      border: none;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+
+    #chat-container {
+      display: none;
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 300px;
+      background-color: rgb(255, 255, 255);
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    #chat-header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 10px 10px 0 0;
+    }
+
+    #chat-body {
+      padding: 10px;
+      height: 400px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background-color: #f9f9f9;
+    }
+
+    #chat-footer {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+      background-color: #fff;
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .message {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      max-width: 80%;
+      word-wrap: break-word;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .user-message {
+      background-color: #007bff;
+      color: white;
+      align-self: flex-end;
+    }
+
+    .bot-message {
+      background-color: #f1f1f1;
+      color: black;
+      align-self: flex-start;
+    }
+
+    .message img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+
+    .typing-indicator {
+      font-style: italic;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+  <div id="main-content">
+    <header>
+      <h1>Welcome to Our Restaurant</h1>
+      <p>Experience the best dining experience with us.</p>
+    </header>
+  </div>
+
+  <button id="chat-btn">Chat</button>
+
+  <div id="chat-container">
+    <div id="chat-header">
+      <div>Customer Support Chatbot</div>
+      <button id="close-chat-btn">&times;</button>
+    </div>
+    <div id="chat-body">
+      <div class="message bot-message">
+        <img src="robot_5226029.png" alt="Bot Icon">
+        <span>Hello! How can I assist you today?</span>
+      </div>
+    </div>
+    <div id="chat-footer">
+      <input type="text" id="user-input" placeholder="Type a message...">
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatButton = document.getElementById('chat-btn');
+    const chatContainer = document.getElementById('chat-container');
+    const closeButton = document.getElementById('close-chat-btn');
+    const mainContent = document.getElementById('main-content');
+
+    chatButton.addEventListener('click', function () {
+      chatContainer.style.display = 'block';
+    });
+
+    closeButton.addEventListener('click', function () {
+      chatContainer.style.display = 'none';
+    });
+
+    document.getElementById('send-btn').addEventListener('click', function () {
+      const userInput = document.getElementById('user-input').value.trim();
+      if (userInput) {
+        displayMessage(userInput, 'user');
+        getBotResponse(userInput);
+        document.getElementById('user-input').value = '';
+      }
+    });
+
+    function displayMessage(message, sender) {
+      const chatBody = document.getElementById('chat-body');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
+
+      const img = document.createElement('img');
+      img.src = sender === 'user' ? 'hairstyle_17913479.png' : 'robot_5226029.png';
+      img.alt = sender === 'user' ? 'User Icon' : 'Bot Icon';
+
+      const text = document.createElement('span');
+      text.innerText = message;
+
+      messageDiv.appendChild(img);
+      messageDiv.appendChild(text);
+      chatBody.appendChild(messageDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+      const chatBody = document.getElementById('chat-body');
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'message bot-message typing-indicator';
+      typingDiv.innerText = 'Bot is typing...';
+      typingDiv.id = 'typing-indicator';
+      chatBody.appendChild(typingDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const typingIndicator = document.getElementById('typing-indicator');
+      if (typingIndicator) {
+        typingIndicator.remove();
+      }
+    }
+
+    function getBotResponse(userInput) {
+      showTypingIndicator();
+      let botMessage = '';
+      const lowercaseInput = userInput.toLowerCase();
+
+      // Simple NLP for response
+      if (lowercaseInput.includes("hello") || lowercaseInput.includes("hi")) {
+        botMessage = "Hello! How can I assist you today?";
+      } else if (lowercaseInput.includes("menu") || lowercaseInput.includes("food")) {
+        botMessage = "Our menu includes a variety of dishes from appetizers to desserts. Check our website for more details!";
+      } else if (lowercaseInput.includes("hours") || lowercaseInput.includes("open")) {
+        botMessage = "We are open from 9 AM to 9 PM, Monday through Friday.";
+      } else if (lowercaseInput.includes("reservation")) {
+        botMessage = "You can make a reservation on our website or call us directly.";
+      } else if (lowercaseInput.includes("thanks")) {
+        botMessage = "You're welcome! Have a great day!";
+      }  else if (lowercaseInput.includes("price") || lowercaseInput.includes("cost")) {
+        botMessage = "Our products range from $50 to $500. What specifically are you looking for?";
+      } else if (lowercaseInput.includes("hours") || lowercaseInput.includes("open")) {
+        botMessage = "We are open from 9 AM to 9 PM, Monday through Friday.";
+      } else if (lowercaseInput.includes("thanks") || lowercaseInput.includes("thank you")) {
+        botMessage = "You're welcome! Feel free to ask anything else.";
+      } else if (lowercaseInput.includes("help") || lowercaseInput.includes("support")) {
+        botMessage = "Sure, I'm here to help! What do you need assistance with?";
+      } else if (lowercaseInput.includes("order") || lowercaseInput.includes("purchase")) {
+        botMessage = "You can place an order through our website or contact our sales team.";
+      } else if (lowercaseInput.includes("contact") || lowercaseInput.includes("phone")) {
+        botMessage = "You can contact us at (123) 456-7890 or email us at support@example.com.";
+      } else{
+       // Fallback to external API for unknown inputs
+       fetch(`https://api.example.com/getResponse?query=${encodeURIComponent(userInput)}`)
+       .then(response => response.json())
+       .then(data => {
+         botMessage = data.response;
+         displayBotMessage(botMessage);
+       })
+       .catch(() => {
+         botMessage = "I'm not sure how to respond to that. Could you rephrase?";
+         displayBotMessage(botMessage);
+       });
+     return;
+   }
+      setTimeout(() => {
+        removeTypingIndicator();
+        displayMessage(botMessage, 'bot');
+      }, 1000);
+    }
+  </script>
+
+  <!-- CXGenie Script for Chatbot -->
+  <!--<script src="https://widget.cxgenie.ai/widget.js" data-aid="fdd9e6d8-4de8-4980-9e17-20ef6305dd29" data-lang="en"></script> -->
+</body>
+</html>
